@@ -1,410 +1,295 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hank Chang | NCHU AIoT 2026 Personal Dashboard & Telemetry</title>
-  <meta name="description" content="Personal telemetry dashboard and portfolio for Hank Chang, NCHU AIoT Engineer & Developer.">
-  
-  <!-- Modern Typography Fonts -->
+  <title>Hank Chang | Personal Horizon & IoT Space</title>
+  <meta name="description" content="Hank Chang 的個人空間與即時時間系統 — 專注於物聯網（IoT）、邊緣運算與智能硬體系統。">
+
+  <!-- Distinctive Typography Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=2.0">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css?v=3.0">
 </head>
 <body>
-  <!-- Ambient Interactive Particle Canvas -->
-  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <!-- Dynamic Cosmic Nebula Starfield Canvas -->
+  <canvas id="starfield-canvas" aria-hidden="true"></canvas>
 
-  <!-- Ambient Glow Orbs -->
-  <div class="ambient-orb orb-cyan" aria-hidden="true"></div>
-  <div class="ambient-orb orb-purple" aria-hidden="true"></div>
-  <div class="ambient-orb orb-blue" aria-hidden="true"></div>
+  <!-- Ambient Sunset Horizon Lighting -->
+  <div class="ambient-glow glow-sunset" aria-hidden="true"></div>
+  <div class="ambient-glow glow-aurora" aria-hidden="true"></div>
 
-  <!-- Main Page Wrapper -->
-  <div class="page-wrapper">
-    
-    <!-- Top Navigation Bar -->
-    <header class="top-nav" id="top-nav">
-      <div class="nav-brand">
-        <span class="brand-badge">NCHU AIoT // 2026</span>
-        <span class="brand-divider">/</span>
-        <span class="brand-sub">NODE_HC.01</span>
+  <div class="horizon-wrapper">
+
+    <!-- Top Navigation Header -->
+    <header class="horizon-nav">
+      <div class="nav-identity">
+        <span class="identity-dot"></span>
+        <span class="identity-title">HANK CHANG</span>
+        <span class="identity-tag">NCHU IoT</span>
       </div>
 
-      <div class="nav-controls">
-        <div class="status-indicator" title="System status is operational">
-          <span class="status-dot"></span>
-          <span class="status-text">SYSTEM ONLINE</span>
-        </div>
-
-        <a href="https://github.com/hankyyyyyy/NCHU_IOT" target="_blank" rel="noopener" class="nav-btn repo-btn" title="View Source on GitHub">
-          <svg class="btn-icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+      <div class="nav-actions">
+        <a href="https://github.com/hankyyyyyy/NCHU_IOT" target="_blank" rel="noopener" class="nav-chip repo-chip" title="GitHub Repository">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
           </svg>
           <span>NCHU_IOT</span>
         </a>
 
-        <button id="format-toggle-btn" class="nav-btn" title="Toggle 12H / 24H time format">
-          <svg class="btn-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          <span id="format-label">24H</span>
+        <button id="time-format-btn" class="nav-chip" title="切換 12/24 小時制">
+          <span id="format-text">24H 模式</span>
         </button>
 
-        <button id="quick-edit-btn" class="nav-btn" title="Edit Profile Details">
-          <svg class="btn-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+        <button id="customize-trigger-btn" class="nav-chip highlight-chip" title="編輯個人資料">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 20h9"></path>
             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
           </svg>
-          <span>Edit Profile</span>
+          <span>個人設定</span>
         </button>
       </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="main-content">
-      
-      <!-- Hero Header & Identity -->
-      <section class="hero-identity-section">
-        <div class="greeting-pill" id="dynamic-greeting-pill">
-          <span id="greeting-icon" class="greeting-icon">🌅</span>
-          <span id="greeting-text" class="greeting-text">GOOD MORNING, HANK CHANG</span>
+    <!-- Main Content Flow -->
+    <main class="horizon-main">
+
+      <!-- Profile Hero Card -->
+      <section class="profile-hero-card">
+        <div class="avatar-holder">
+          <div class="avatar-ring">
+            <div class="avatar-inner">
+              <span class="avatar-text" id="avatar-display">HC</span>
+            </div>
+          </div>
+          <span class="status-badge" title="Live & Connected">⚡</span>
         </div>
 
-        <div class="profile-card glass-panel">
-          <div class="profile-avatar-wrapper">
-            <div class="avatar-glow"></div>
-            <div class="avatar-circle">
-              <span class="avatar-initials" id="avatar-initials">HC</span>
-            </div>
-            <span class="avatar-status-badge" title="Active in NCHU AIoT Lab">⚡</span>
+        <div class="profile-details">
+          <div class="greeting-bar">
+            <span class="solar-icon" id="solar-icon">🌅</span>
+            <span class="greeting-msg" id="greeting-msg">早安，歡迎來到 Hank 的個人站</span>
           </div>
 
-          <div class="profile-info">
-            <div class="name-row">
-              <h1 id="user-name" class="user-name">Hank Chang</h1>
-              <button id="inline-rename-btn" class="icon-action-btn" title="Edit display name" aria-label="Change display name">
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-                </svg>
-              </button>
+          <div class="name-heading-group">
+            <h1 class="author-name" id="author-name">Hank Chang</h1>
+            <span class="role-pill">NCHU IoT Engineer</span>
+          </div>
+
+          <p class="author-bio" id="author-bio">
+            專注於物聯網系統開發、嵌入式微控制器與邊緣智能運算。熱衷將傳感器數據轉化為具備即時洞察力的實體系統。
+          </p>
+
+          <div class="interest-tags">
+            <span class="tag">#物聯網開發</span>
+            <span class="tag">#嵌入式系統</span>
+            <span class="tag">#邊緣AI運算</span>
+            <span class="tag">#中興大學</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Central Time & Celestial Telemetry Hub -->
+      <section class="time-station-card">
+        <div class="station-header">
+          <div class="station-title">
+            <span class="pulse-indicator"></span>
+            <span>即時時間核心 / REAL-TIME HORIZON</span>
+          </div>
+          <div class="station-tools">
+            <button id="copy-stamp-btn" class="action-btn" title="複製時間戳記">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+              <span>複製 ISO 時間</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Giant Segmented Digital Clock -->
+        <div class="digital-time-stage">
+          <div class="digits-box">
+            <div class="time-block">
+              <span class="num" id="clock-hr">00</span>
+              <span class="label">時 HOURS</span>
             </div>
-            <p id="user-role" class="user-role">NCHU AIoT Engineer & Developer • 物聯網與邊緣智能系統探索</p>
-            <div class="profile-badges">
-              <span class="spec-badge">Artificial Intelligence of Things</span>
-              <span class="spec-badge">Embedded Systems</span>
-              <span class="spec-badge">Edge Computing</span>
+            <span class="colon">:</span>
+            <div class="time-block">
+              <span class="num" id="clock-min">00</span>
+              <span class="label">分 MINUTES</span>
+            </div>
+            <span class="colon">:</span>
+            <div class="time-block highlight-block">
+              <span class="num" id="clock-sec">00</span>
+              <span class="label">秒 SECONDS</span>
+            </div>
+          </div>
+          <span class="ampm-flag hidden" id="clock-ampm">AM</span>
+        </div>
+
+        <!-- Date & Day Progress Bar -->
+        <div class="station-meta-row">
+          <div class="date-info">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span id="calendar-date">2026年9月16日 星期三</span>
+            <span class="tz-tag" id="timezone-tag">UTC+8 台灣時間</span>
+          </div>
+
+          <div class="progress-info-group">
+            <div class="progress-labels">
+              <span>今日時光流逝</span>
+              <span id="day-percent">0.0%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-bar" id="day-progress-bar" style="width: 0%;"></div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- HERO CLOCK WIDGET -->
-      <section class="clock-hero-section">
-        <div class="clock-card glass-panel glow-card">
-          <div class="clock-card-header">
-            <div class="clock-label">
-              <svg class="chip-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+      <!-- Custom Original Cards Grid -->
+      <section class="cards-grid">
+
+        <!-- Card 1: 物聯網專案與感測器實驗 -->
+        <article class="feature-card">
+          <div class="card-head">
+            <div class="head-icon icon-coral">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                <line x1="12" y1="20" x2="12.01" y2="20"></line>
               </svg>
-              <span>REAL-TIME LOCAL TELEMETRY</span>
             </div>
-            <div class="clock-actions">
-              <button id="copy-time-btn" class="pill-btn" title="Copy ISO Timestamp">
-                <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                </svg>
-                <span>Copy Time</span>
-              </button>
-            </div>
+            <h3>IoT 專案與研究領域</h3>
           </div>
+          <p class="card-desc">國立中興大學物聯網（NCHU IoT）實務與邊緣架構：</p>
+          <ul class="iot-list">
+            <li>
+              <span class="bullet coral"></span>
+              <div>
+                <strong>ESP32 傳感遙測微系統</strong>
+                <span>溫濕度、光照、加速度感測節點無線傳輸</span>
+              </div>
+            </li>
+            <li>
+              <span class="bullet amber"></span>
+              <div>
+                <strong>MQTT 即時資料管道</strong>
+                <span>發布/訂閱低延遲傳輸與雲端儲存</span>
+              </div>
+            </li>
+            <li>
+              <span class="bullet emerald"></span>
+              <div>
+                <strong>邊緣 TinyML 模型部署</strong>
+                <span>低功耗晶片實體異常偵測與自動化控制</span>
+              </div>
+            </li>
+          </ul>
+        </article>
 
-          <!-- Digital Clock Display -->
-          <div class="digital-clock-face" id="clock-face">
-            <div class="time-digits-group">
-              <div class="digit-box" id="box-hours">
-                <span id="clock-hours" class="time-digit">00</span>
-                <span class="digit-sublabel">HOURS</span>
-              </div>
-              <span class="colon-pulse">:</span>
-              <div class="digit-box" id="box-minutes">
-                <span id="clock-minutes" class="time-digit">00</span>
-                <span class="digit-sublabel">MINUTES</span>
-              </div>
-              <span class="colon-pulse">:</span>
-              <div class="digit-box" id="box-seconds">
-                <span id="clock-seconds" class="time-digit highlight-cyan">00</span>
-                <span class="digit-sublabel">SECONDS</span>
-              </div>
-            </div>
-            <div class="period-container" id="period-container">
-              <span id="clock-period" class="period-badge">AM</span>
-            </div>
-          </div>
-
-          <!-- Calendar & Metadata Display -->
-          <div class="clock-footer-meta">
-            <div class="date-display-box">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
+        <!-- Card 2: 互動專注便簽 (Interactive Note) -->
+        <article class="feature-card">
+          <div class="card-head">
+            <div class="head-icon icon-amber">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
               </svg>
-              <span id="clock-date" class="clock-date-text">Loading local calendar...</span>
             </div>
-
-            <div class="meta-tags-row">
-              <div class="meta-chip">
-                <span class="chip-dot"></span>
-                <span id="clock-timezone">Asia/Taipei (UTC+8)</span>
-              </div>
-              <div class="meta-chip" id="day-progress-chip" title="Percentage of day elapsed">
-                <span class="chip-label">DAY PROGRESS:</span>
-                <span id="day-progress-val">0%</span>
-                <div class="mini-progress-bar">
-                  <div class="mini-progress-fill" id="day-progress-fill" style="width: 0%"></div>
-                </div>
-              </div>
-            </div>
+            <h3>Hank 的今日專注筆記</h3>
           </div>
-        </div>
-      </section>
-
-      <!-- Bento Grid: Highlights, Research Pillars & Telemetry -->
-      <section class="dashboard-grid">
-        
-        <!-- Card 1: About Hank Chang -->
-        <article class="grid-card glass-panel">
-          <div class="card-header">
-            <div class="card-title-wrap">
-              <div class="card-icon-box cyan-glow">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-              </div>
-              <h3>About Hank Chang</h3>
-            </div>
-            <span class="card-badge">Profile</span>
+          <p class="card-desc">點擊下方可直接編輯備忘錄，內容將自動存於本地：</p>
+          <textarea id="memo-textarea" class="memo-box" placeholder="在此輸入今天的研究待辦或筆記..."></textarea>
+          <div class="memo-footer">
+            <span class="memo-status" id="memo-status">自動儲存已啟用</span>
+            <button id="clear-memo-btn" class="text-btn">清空</button>
           </div>
-          <div class="card-body">
-            <p class="card-lead">
-              Passionate engineer exploring the convergence of <strong>Artificial Intelligence</strong>, <strong>Internet of Things (IoT)</strong>, and <strong>Embedded Edge Computing</strong>.
-            </p>
-            <p class="card-text">
-              Building intelligent physical interfaces, sensor telemetry pipelines, and low-latency decision systems designed for resilient, real-world deployment.
-            </p>
-            <div class="stat-pills-row">
-              <div class="stat-pill">
-                <span class="stat-number">2026</span>
-                <span class="stat-caption">Cohort</span>
-              </div>
-              <div class="stat-pill">
-                <span class="stat-number">Edge AI</span>
-                <span class="stat-caption">Specialization</span>
-              </div>
-              <div class="stat-pill">
-                <span class="stat-number">100%</span>
-                <span class="stat-caption">Curiosity</span>
-              </div>
+        </article>
+
+        <!-- Card 3: 全球主要時區 -->
+        <article class="feature-card">
+          <div class="card-head">
+            <div class="head-icon icon-cyan">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <h3>全球樞紐時間同步</h3>
+          </div>
+          <div class="world-times-list">
+            <div class="world-row">
+              <span class="city">東京 Tokyo (JST)</span>
+              <span class="time" id="time-tokyo">--:--</span>
+            </div>
+            <div class="world-row">
+              <span class="city">倫敦 London (GMT)</span>
+              <span class="time" id="time-london">--:--</span>
+            </div>
+            <div class="world-row">
+              <span class="city">紐約 New York (EST)</span>
+              <span class="time" id="time-ny">--:--</span>
+            </div>
+            <div class="world-row">
+              <span class="city">舊金山 SF (PST)</span>
+              <span class="time" id="time-sf">--:--</span>
             </div>
           </div>
         </article>
 
-        <!-- Card 2: AIoT 2026 Focus Pillars -->
-        <article class="grid-card glass-panel">
-          <div class="card-header">
-            <div class="card-title-wrap">
-              <div class="card-icon-box purple-glow">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                  <polyline points="2 17 12 22 22 17"></polyline>
-                  <polyline points="2 12 12 17 22 12"></polyline>
-                </svg>
-              </div>
-              <h3>AIoT 2026 Focus Pillars</h3>
+        <!-- Card 4: 快速傳送門 -->
+        <article class="feature-card">
+          <div class="card-head">
+            <div class="head-icon icon-emerald">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+              </svg>
             </div>
-            <span class="card-badge">Research</span>
+            <h3>快速傳送門</h3>
           </div>
-          <div class="card-body">
-            <ul class="focus-list">
-              <li class="focus-item">
-                <div class="focus-bullet cyan"></div>
-                <div class="focus-content">
-                  <strong>Embedded Edge ML & TinyML</strong>
-                  <span>Running quantized neural nets on microcontrollers and neural accelerators.</span>
-                </div>
-              </li>
-              <li class="focus-item">
-                <div class="focus-bullet purple"></div>
-                <div class="focus-content">
-                  <strong>Sensor Networks & Telemetry</strong>
-                  <span>MQTT, WebSockets, Bluetooth LE, and multi-node sensor synchronization.</span>
-                </div>
-              </li>
-              <li class="focus-item">
-                <div class="focus-bullet blue"></div>
-                <div class="focus-content">
-                  <strong>Intelligent Automation</strong>
-                  <span>Closed-loop cyber-physical systems, telemetry logging, and autonomous controls.</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </article>
-
-        <!-- Card 3: Technical Arsenal -->
-        <article class="grid-card glass-panel">
-          <div class="card-header">
-            <div class="card-title-wrap">
-              <div class="card-icon-box blue-glow">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="16 18 22 12 16 6"></polyline>
-                  <polyline points="8 6 2 12 8 18"></polyline>
-                </svg>
+          <div class="portal-grid">
+            <a href="https://github.com/hankyyyyyy/NCHU_IOT" target="_blank" rel="noopener" class="portal-link highlight-link">
+              <span class="portal-icon">🚀</span>
+              <div class="portal-text">
+                <span class="title">NCHU_IOT 倉庫</span>
+                <span class="desc">GitHub 專案原始碼</span>
               </div>
-              <h3>Technical Arsenal</h3>
-            </div>
-            <span class="card-badge">Competencies</span>
-          </div>
-          <div class="card-body">
-            <div class="skills-cluster">
-              <span class="skill-tag"><span class="skill-dot"></span>C / C++</span>
-              <span class="skill-tag"><span class="skill-dot"></span>Python</span>
-              <span class="skill-tag"><span class="skill-dot"></span>ESP32 / Arduino</span>
-              <span class="skill-tag"><span class="skill-dot"></span>FreeRTOS</span>
-              <span class="skill-tag"><span class="skill-dot"></span>TensorFlow Lite / TinyML</span>
-              <span class="skill-tag"><span class="skill-dot"></span>MQTT & CoAP</span>
-              <span class="skill-tag"><span class="skill-dot"></span>JavaScript / Web</span>
-              <span class="skill-tag"><span class="skill-dot"></span>Linux / Docker</span>
-              <span class="skill-tag"><span class="skill-dot"></span>Computer Vision</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Card 4: Live Node Diagnostics -->
-        <article class="grid-card glass-panel">
-          <div class="card-header">
-            <div class="card-title-wrap">
-              <div class="card-icon-box green-glow">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
-                </svg>
-              </div>
-              <h3>Live Node Diagnostics</h3>
-            </div>
-            <span class="card-badge pulse-badge">ACTIVE LINK</span>
-          </div>
-          <div class="card-body">
-            <div class="telemetry-grid">
-              <div class="telemetry-item">
-                <span class="telemetry-label">GATEWAY LATENCY</span>
-                <span class="telemetry-value highlight-green" id="telemetry-latency">14 ms</span>
-              </div>
-              <div class="telemetry-item">
-                <span class="telemetry-label">CPU CLOCK FREQ</span>
-                <span class="telemetry-value">240 MHz</span>
-              </div>
-              <div class="telemetry-item">
-                <span class="telemetry-label">MEMORY BUFFER</span>
-                <span class="telemetry-value">95.2% OK</span>
-              </div>
-              <div class="telemetry-item">
-                <span class="telemetry-label">TELEMETRY STREAM</span>
-                <span class="telemetry-value highlight-cyan">1000 Hz Live</span>
-              </div>
-            </div>
-            <div class="telemetry-chart-bar" aria-hidden="true">
-              <div class="sparkline-bar"></div>
-              <div class="sparkline-bar"></div>
-              <div class="sparkline-bar"></div>
-              <div class="sparkline-bar"></div>
-              <div class="sparkline-bar"></div>
-              <div class="sparkline-bar"></div>
-              <div class="sparkline-bar"></div>
-              <div class="sparkline-bar"></div>
-              <div class="sparkline-bar"></div>
-              <div class="sparkline-bar"></div>
-              <div class="sparkline-bar"></div>
-              <div class="sparkline-bar"></div>
-            </div>
-          </div>
-        </article>
-
-        <!-- Card 5: Global World Clocks -->
-        <article class="grid-card glass-panel">
-          <div class="card-header">
-            <div class="card-title-wrap">
-              <div class="card-icon-box cyan-glow">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                  <path d="M2 12h20"></path>
-                </svg>
-              </div>
-              <h3>Global Hubs Synchronization</h3>
-            </div>
-            <span class="card-badge">Sync</span>
-          </div>
-          <div class="card-body world-clocks-container">
-            <div class="world-clock-row">
-              <span class="city-name">Tokyo (JST)</span>
-              <span class="city-time highlight-cyan" id="world-tokyo">--:--</span>
-            </div>
-            <div class="world-clock-row">
-              <span class="city-name">London (GMT)</span>
-              <span class="city-time" id="world-london">--:--</span>
-            </div>
-            <div class="world-clock-row">
-              <span class="city-name">New York (EST)</span>
-              <span class="city-time" id="world-ny">--:--</span>
-            </div>
-            <div class="world-clock-row">
-              <span class="city-name">San Francisco (PST)</span>
-              <span class="city-time" id="world-sf">--:--</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Card 6: Quick Launch Tools -->
-        <article class="grid-card glass-panel">
-          <div class="card-header">
-            <div class="card-title-wrap">
-              <div class="card-icon-box purple-glow">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-              </div>
-              <h3>Quick Launch</h3>
-            </div>
-            <span class="card-badge">Portals</span>
-          </div>
-          <div class="card-body quick-launch-grid">
-            <a href="https://github.com/hankyyyyyy/NCHU_IOT" target="_blank" rel="noopener" class="launch-pill highlight-repo">
-              <span class="launch-icon">🌐</span>
-              <span class="launch-title">NCHU_IOT Repo</span>
             </a>
-            <a href="https://github.com/hankyyyyyy" target="_blank" rel="noopener" class="launch-pill">
-              <span class="launch-icon">🐙</span>
-              <span class="launch-title">GitHub Profile</span>
+            <a href="https://github.com/hankyyyyyy" target="_blank" rel="noopener" class="portal-link">
+              <span class="portal-icon">🐙</span>
+              <div class="portal-text">
+                <span class="title">GitHub 主頁</span>
+                <span class="desc">@hankyyyyyy</span>
+              </div>
             </a>
-            <a href="https://news.ycombinator.com" target="_blank" rel="noopener" class="launch-pill">
-              <span class="launch-icon">📰</span>
-              <span class="launch-title">Hacker News</span>
+            <a href="https://www.nchu.edu.tw" target="_blank" rel="noopener" class="portal-link">
+              <span class="portal-icon">🎓</span>
+              <div class="portal-text">
+                <span class="title">國立中興大學</span>
+                <span class="desc">NCHU 官方首頁</span>
+              </div>
             </a>
-            <a href="https://google.com" target="_blank" rel="noopener" class="launch-pill">
-              <span class="launch-icon">🔍</span>
-              <span class="launch-title">Google Search</span>
+            <a href="https://google.com" target="_blank" rel="noopener" class="portal-link">
+              <span class="portal-icon">🔍</span>
+              <div class="portal-text">
+                <span class="title">Google 搜尋</span>
+                <span class="desc">即時網路檢索</span>
+              </div>
             </a>
           </div>
         </article>
@@ -414,48 +299,48 @@
     </main>
 
     <!-- Footer -->
-    <footer class="page-footer">
-      <div class="footer-left">
-        <p>© 2026 <strong>Hank Chang</strong> • NCHU AIoT Laboratory</p>
-        <p class="footer-subtext">Designed with modern dark cyberpunk glassmorphism & live browser telemetry</p>
+    <footer class="horizon-footer">
+      <div class="footer-copy">
+        <p>© 2026 <strong>Hank Chang</strong> • 國立中興大學 NCHU IoT 原創個人專屬設計</p>
+        <p class="footer-note">打造於 Antigravity AI 環境 • 非直接套用公版</p>
       </div>
-      <div class="footer-right">
-        <button id="reset-profile-btn" class="footer-btn">Reset Profile to Default</button>
+      <div class="footer-back-top">
+        <button id="back-to-top" class="top-btn" title="回到頂部">↑ 回到頂部</button>
       </div>
     </footer>
 
   </div>
 
-  <!-- Toast Notification Container -->
-  <div id="toast" class="toast" role="alert" aria-live="polite">
-    <span id="toast-icon">✨</span>
-    <span id="toast-message">Timestamp copied to clipboard!</span>
+  <!-- Toast Notification Pop -->
+  <div id="toast" class="toast-box" role="alert" aria-live="polite">
+    <span class="toast-icon">✨</span>
+    <span class="toast-txt" id="toast-txt">已成功複製時間戳記！</span>
   </div>
 
-  <!-- Edit Profile Modal -->
-  <div id="edit-modal" class="modal-overlay" aria-hidden="true">
-    <div class="modal-card glass-panel">
-      <div class="modal-header">
-        <h3>Customize Profile</h3>
-        <button id="modal-close-btn" class="modal-close-btn" aria-label="Close modal">×</button>
+  <!-- Customize Profile Modal -->
+  <div id="profile-modal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-window">
+      <div class="modal-top">
+        <h3>編輯個人資料 (Profile Settings)</h3>
+        <button id="modal-close" class="close-btn" aria-label="關閉">×</button>
       </div>
-      <form id="edit-profile-form" class="modal-form">
-        <div class="form-group">
-          <label for="input-name">Your Full / Display Name</label>
-          <input type="text" id="input-name" placeholder="e.g. Hank Chang" required maxlength="40">
+      <form id="profile-form" class="modal-body">
+        <div class="input-field">
+          <label for="form-name">顯示姓名 (Full Name)</label>
+          <input type="text" id="form-name" required maxlength="30" placeholder="例如：Hank Chang">
         </div>
-        <div class="form-group">
-          <label for="input-role">Role / Specialization Tagline</label>
-          <input type="text" id="input-role" placeholder="e.g. NCHU AIoT Engineer & Developer" required maxlength="80">
+        <div class="input-field">
+          <label for="form-bio">自我介紹 / 職銜 (Tagline)</label>
+          <input type="text" id="form-bio" required maxlength="100" placeholder="例如：NCHU IoT Engineer">
         </div>
-        <div class="modal-actions">
-          <button type="button" id="modal-cancel-btn" class="btn btn-secondary">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Profile</button>
+        <div class="modal-btns">
+          <button type="button" id="modal-cancel" class="btn-cancel">取消</button>
+          <button type="submit" class="btn-submit">儲存變更</button>
         </div>
       </form>
     </div>
   </div>
 
-  <script src="app.js?v=2.0"></script>
+  <script src="app.js?v=3.0"></script>
 </body>
 </html>

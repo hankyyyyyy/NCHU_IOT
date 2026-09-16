@@ -1,84 +1,82 @@
 /**
- * NCHU AIoT 2026 - Hank Chang Personal Telemetry Dashboard
- * Interactive Particle Mesh Physics, Precision Clock Engine & Telemetry Simulator
+ * Hank Chang - Personal Horizon & IoT Space
+ * Interactive Starfield Simulation, Precision Dual Clock & Memo State
  */
 
 (function () {
   'use strict';
 
-  // --- Configuration & Defaults ---
+  // --- Defaults & Storage Keys ---
   const DEFAULT_PROFILE = {
     name: 'Hank Chang',
-    role: 'NCHU AIoT Engineer & Developer • 物聯網與邊緣智能系統探索'
+    bio: '專注於物聯網系統開發、嵌入式微控制器與邊緣智能運算。熱衷將傳感器數據轉化為具備即時洞察力的實體系統。'
   };
 
-  const STORAGE_KEYS = {
-    PROFILE: 'aiot_hank_profile',
-    TIME_FORMAT: 'aiot_hank_time_format' // '12' or '24'
+  const STORAGE = {
+    PROFILE: 'hank_horizon_profile',
+    FORMAT_24: 'hank_horizon_24h',
+    MEMO: 'hank_horizon_memo'
   };
 
   // --- State ---
-  let is24HourFormat = localStorage.getItem(STORAGE_KEYS.TIME_FORMAT) !== '12';
-  let userProfile = loadUserProfile();
+  let is24Hour = localStorage.getItem(STORAGE.FORMAT_24) !== 'false';
+  let profile = loadProfile();
 
   // --- DOM Elements ---
-  const elHours = document.getElementById('clock-hours');
-  const elMinutes = document.getElementById('clock-minutes');
-  const elSeconds = document.getElementById('clock-seconds');
-  const elPeriod = document.getElementById('clock-period');
-  const elPeriodContainer = document.getElementById('period-container');
-  const elDate = document.getElementById('clock-date');
-  const elTimezone = document.getElementById('clock-timezone');
-  const elDayProgressVal = document.getElementById('day-progress-val');
-  const elDayProgressFill = document.getElementById('day-progress-fill');
+  const el = {
+    authorName: document.getElementById('author-name'),
+    authorBio: document.getElementById('author-bio'),
+    avatarDisplay: document.getElementById('avatar-display'),
+    solarIcon: document.getElementById('solar-icon'),
+    greetingMsg: document.getElementById('greeting-msg'),
 
-  const elGreetingText = document.getElementById('greeting-text');
-  const elGreetingIcon = document.getElementById('greeting-icon');
+    clockHr: document.getElementById('clock-hr'),
+    clockMin: document.getElementById('clock-min'),
+    clockSec: document.getElementById('clock-sec'),
+    clockAmpm: document.getElementById('clock-ampm'),
+    calendarDate: document.getElementById('calendar-date'),
+    dayPercent: document.getElementById('day-percent'),
+    dayProgressBar: document.getElementById('day-progress-bar'),
 
-  const elUserName = document.getElementById('user-name');
-  const elUserRole = document.getElementById('user-role');
-  const elAvatarInitials = document.getElementById('avatar-initials');
+    timeFormatBtn: document.getElementById('time-format-btn'),
+    formatText: document.getElementById('format-text'),
+    copyStampBtn: document.getElementById('copy-stamp-btn'),
+    customizeTriggerBtn: document.getElementById('customize-trigger-btn'),
+    backToTopBtn: document.getElementById('back-to-top'),
 
-  const btnFormatToggle = document.getElementById('format-toggle-btn');
-  const lblFormat = document.getElementById('format-label');
-  const btnCopyTime = document.getElementById('copy-time-btn');
-  const btnQuickEdit = document.getElementById('quick-edit-btn');
-  const btnInlineRename = document.getElementById('inline-rename-btn');
-  const btnResetProfile = document.getElementById('reset-profile-btn');
+    // World clocks
+    timeTokyo: document.getElementById('time-tokyo'),
+    timeLondon: document.getElementById('time-london'),
+    timeNy: document.getElementById('time-ny'),
+    timeSf: document.getElementById('time-sf'),
 
-  const modalOverlay = document.getElementById('edit-modal');
-  const modalCloseBtn = document.getElementById('modal-close-btn');
-  const modalCancelBtn = document.getElementById('modal-cancel-btn');
-  const editForm = document.getElementById('edit-profile-form');
-  const inputName = document.getElementById('input-name');
-  const inputRole = document.getElementById('input-role');
+    // Memo
+    memoTextarea: document.getElementById('memo-textarea'),
+    memoStatus: document.getElementById('memo-status'),
+    clearMemoBtn: document.getElementById('clear-memo-btn'),
 
-  const toast = document.getElementById('toast');
-  const toastMessage = document.getElementById('toast-message');
-  let toastTimer = null;
+    // Toast
+    toast: document.getElementById('toast'),
+    toastTxt: document.getElementById('toast-txt'),
 
-  const telemetryLatency = document.getElementById('telemetry-latency');
-
-  // World Clocks
-  const worldTokyo = document.getElementById('world-tokyo');
-  const worldLondon = document.getElementById('world-london');
-  const worldNy = document.getElementById('world-ny');
-  const worldSf = document.getElementById('world-sf');
+    // Modal
+    profileModal: document.getElementById('profile-modal'),
+    modalClose: document.getElementById('modal-close'),
+    modalCancel: document.getElementById('modal-cancel'),
+    profileForm: document.getElementById('profile-form'),
+    formName: document.getElementById('form-name'),
+    formBio: document.getElementById('form-bio')
+  };
 
   /* ==========================================================================
-     Profile State & Initialization
+     Profile Management
      ========================================================================== */
 
-  function loadUserProfile() {
+  function loadProfile() {
     try {
-      const saved = localStorage.getItem(STORAGE_KEYS.PROFILE);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.name && parsed.name !== 'Alex Rivera') return parsed;
-      }
-    } catch (e) {
-      console.warn('Failed reading profile from storage:', e);
-    }
+      const saved = localStorage.getItem(STORAGE.PROFILE);
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
     return { ...DEFAULT_PROFILE };
   }
 
@@ -90,224 +88,188 @@
     return name.slice(0, 2).toUpperCase();
   }
 
-  function applyProfile() {
-    elUserName.textContent = userProfile.name;
-    elUserRole.textContent = userProfile.role;
-    if (elAvatarInitials) {
-      elAvatarInitials.textContent = getInitials(userProfile.name);
-    }
-    updateGreeting(new Date());
+  function renderProfile() {
+    el.authorName.textContent = profile.name;
+    el.authorBio.textContent = profile.bio;
+    el.avatarDisplay.textContent = getInitials(profile.name);
   }
 
-  function saveUserProfile(name, role) {
-    userProfile = {
+  function saveProfile(name, bio) {
+    profile = {
       name: name.trim() || DEFAULT_PROFILE.name,
-      role: role.trim() || DEFAULT_PROFILE.role
+      bio: bio.trim() || DEFAULT_PROFILE.bio
     };
     try {
-      localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(userProfile));
-    } catch (e) {
-      console.warn('Failed saving profile:', e);
-    }
-    applyProfile();
-    showToast('Profile updated successfully!');
+      localStorage.setItem(STORAGE.PROFILE, JSON.stringify(profile));
+    } catch (e) {}
+    renderProfile();
+    showToast('個人資料已成功儲存！');
   }
 
-  function resetProfile() {
-    userProfile = { ...DEFAULT_PROFILE };
+  /* ==========================================================================
+     Time & Solar Telemetry Engine
+     ========================================================================== */
+
+  function pad(num) {
+    return num < 10 ? '0' + num : num.toString();
+  }
+
+  function updateSolarGreeting(hour) {
+    let icon = '☀️';
+    let msg = '午安，保持專注與熱情';
+
+    if (hour >= 5 && hour < 9) {
+      icon = '🌅';
+      msg = '早安，迎接嶄新的晨曦';
+    } else if (hour >= 9 && hour < 12) {
+      icon = '🌤️';
+      msg = '上午好，探索物聯網世界';
+    } else if (hour >= 12 && hour < 14) {
+      icon = '☀️';
+      msg = '正午時分，享受美味午餐與休息';
+    } else if (hour >= 14 && hour < 18) {
+      icon = '⛅';
+      msg = '下午好，持續推進開發專案';
+    } else if (hour >= 18 && hour < 22) {
+      icon = '🌇';
+      msg = '日落暮色，沉澱今日的研究成果';
+    } else {
+      icon = '🌙';
+      msg = '深夜星空，適度休息保持身心健康';
+    }
+
+    el.solarIcon.textContent = icon;
+    el.greetingMsg.textContent = `${msg} • ${profile.name}`;
+  }
+
+  function updateWorldClocks(now) {
+    const opts = { hour: '2-digit', minute: '2-digit', hour12: !is24Hour };
     try {
-      localStorage.removeItem(STORAGE_KEYS.PROFILE);
+      if (el.timeTokyo) el.timeTokyo.textContent = new Intl.DateTimeFormat('zh-TW', { ...opts, timeZone: 'Asia/Tokyo' }).format(now);
+      if (el.timeLondon) el.timeLondon.textContent = new Intl.DateTimeFormat('zh-TW', { ...opts, timeZone: 'Europe/London' }).format(now);
+      if (el.timeNy) el.timeNy.textContent = new Intl.DateTimeFormat('zh-TW', { ...opts, timeZone: 'America/New_York' }).format(now);
+      if (el.timeSf) el.timeSf.textContent = new Intl.DateTimeFormat('zh-TW', { ...opts, timeZone: 'America/Los_Angeles' }).format(now);
     } catch (e) {}
-    applyProfile();
-    showToast('Profile reset to default.');
+  }
+
+  function tick() {
+    const now = new Date();
+    let hours = now.getHours();
+    const minutes = now.getMinutes();
+    const seconds = now.getSeconds();
+
+    // 12/24 hour display
+    if (is24Hour) {
+      el.clockAmpm.classList.add('hidden');
+    } else {
+      el.clockAmpm.classList.remove('hidden');
+      const isPm = hours >= 12;
+      el.clockAmpm.textContent = isPm ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+    }
+
+    el.clockHr.textContent = pad(hours);
+    el.clockMin.textContent = pad(minutes);
+    el.clockSec.textContent = pad(seconds);
+
+    // Day completion percentage
+    const secondsPassed = now.getHours() * 3600 + minutes * 60 + seconds;
+    const dayProgress = ((secondsPassed / 86400) * 100).toFixed(1);
+    el.dayPercent.textContent = `${dayProgress}%`;
+    el.dayProgressBar.style.width = `${dayProgress}%`;
+
+    // Calendar Date in Traditional Chinese
+    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+    el.calendarDate.textContent = `${now.getFullYear()}年${now.getMonth() + 1}月${now.getDate()}日 ${weekdays[now.getDay()]}`;
+
+    updateSolarGreeting(now.getHours());
+    updateWorldClocks(now);
+  }
+
+  function toggleFormat() {
+    is24Hour = !is24Hour;
+    localStorage.setItem(STORAGE.FORMAT_24, is24Hour);
+    el.formatText.textContent = is24Hour ? '24H 模式' : '12H 模式';
+    tick();
+  }
+
+  function copyTimestamp() {
+    const now = new Date();
+    const text = `Hank Chang IoT Horizon Timestamp: ${now.toISOString()} (${now.toLocaleString('zh-TW')})`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('已成功複製 ISO 時間戳記！');
+      }).catch(() => {
+        showToast('時間已產生：' + now.toLocaleTimeString());
+      });
+    } else {
+      showToast('時間已產生：' + now.toLocaleTimeString());
+    }
+  }
+
+  /* ==========================================================================
+     Interactive Memo Pad
+     ========================================================================== */
+
+  function initMemo() {
+    const saved = localStorage.getItem(STORAGE.MEMO);
+    if (saved) el.memoTextarea.value = saved;
+
+    let timeout = null;
+    el.memoTextarea.addEventListener('input', () => {
+      el.memoStatus.textContent = '儲存中...';
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        localStorage.setItem(STORAGE.MEMO, el.memoTextarea.value);
+        el.memoStatus.textContent = '已自動儲存至本地';
+      }, 500);
+    });
+
+    el.clearMemoBtn.addEventListener('click', () => {
+      el.memoTextarea.value = '';
+      localStorage.removeItem(STORAGE.MEMO);
+      el.memoStatus.textContent = '筆記已清空';
+    });
   }
 
   /* ==========================================================================
      Toast Notifications
      ========================================================================== */
 
-  function showToast(message) {
+  let toastTimer = null;
+  function showToast(msg) {
     if (toastTimer) clearTimeout(toastTimer);
-    toastMessage.textContent = message;
-    toast.classList.add('show');
+    el.toastTxt.textContent = msg;
+    el.toast.classList.add('show');
     toastTimer = setTimeout(() => {
-      toast.classList.remove('show');
+      el.toast.classList.remove('show');
     }, 2800);
   }
 
   /* ==========================================================================
-     Time & Clock Telemetry Loop
-     ========================================================================== */
-
-  function padZero(num, size = 2) {
-    let s = num.toString();
-    while (s.length < size) s = '0' + s;
-    return s;
-  }
-
-  function updateGreeting(now) {
-    const hour = now.getHours();
-    let text = 'GOOD DAY';
-    let icon = '✨';
-
-    if (hour >= 5 && hour < 12) {
-      text = 'GOOD MORNING';
-      icon = '🌅';
-    } else if (hour >= 12 && hour < 17) {
-      text = 'GOOD AFTERNOON';
-      icon = '☀️';
-    } else if (hour >= 17 && hour < 22) {
-      text = 'GOOD EVENING';
-      icon = '🌇';
-    } else {
-      text = 'NIGHT MODE ACTIVE';
-      icon = '🌙';
-    }
-
-    elGreetingText.textContent = `${text}, ${userProfile.name.toUpperCase()}`;
-    elGreetingIcon.textContent = icon;
-  }
-
-  function updateWorldClocks(now) {
-    const opts = { hour: '2-digit', minute: '2-digit', hour12: !is24HourFormat };
-    try {
-      if (worldTokyo) worldTokyo.textContent = new Intl.DateTimeFormat('en-US', { ...opts, timeZone: 'Asia/Tokyo' }).format(now);
-      if (worldLondon) worldLondon.textContent = new Intl.DateTimeFormat('en-US', { ...opts, timeZone: 'Europe/London' }).format(now);
-      if (worldNy) worldNy.textContent = new Intl.DateTimeFormat('en-US', { ...opts, timeZone: 'America/New_York' }).format(now);
-      if (worldSf) worldSf.textContent = new Intl.DateTimeFormat('en-US', { ...opts, timeZone: 'America/Los_Angeles' }).format(now);
-    } catch (e) {
-      console.warn('World clock format error:', e);
-    }
-  }
-
-  function tickClock() {
-    const now = new Date();
-    let hours = now.getHours();
-    const minutes = now.getMinutes();
-    const seconds = now.getSeconds();
-
-    // 12H vs 24H formatting
-    if (is24HourFormat) {
-      elPeriodContainer.style.display = 'none';
-    } else {
-      elPeriodContainer.style.display = 'flex';
-      const isPm = hours >= 12;
-      elPeriod.textContent = isPm ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // 0 should be 12
-    }
-
-    elHours.textContent = padZero(hours);
-    elMinutes.textContent = padZero(minutes);
-    elSeconds.textContent = padZero(seconds);
-
-    // Day Progress
-    const totalSecondsToday = now.getHours() * 3600 + minutes * 60 + seconds;
-    const dayProgress = ((totalSecondsToday / 86400) * 100).toFixed(1);
-    elDayProgressVal.textContent = `${dayProgress}%`;
-    elDayProgressFill.style.width = `${dayProgress}%`;
-
-    // Calendar Date
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    elDate.textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
-
-    // World clocks
-    updateWorldClocks(now);
-  }
-
-  function initTimezone() {
-    try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Taipei';
-      const offsetMin = -new Date().getTimezoneOffset();
-      const offsetHrs = offsetMin / 60;
-      const sign = offsetHrs >= 0 ? '+' : '';
-      elTimezone.textContent = `${tz} (UTC${sign}${offsetHrs})`;
-    } catch (e) {
-      elTimezone.textContent = 'Asia/Taipei (UTC+8)';
-    }
-  }
-
-  function toggleTimeFormat() {
-    is24HourFormat = !is24HourFormat;
-    lblFormat.textContent = is24HourFormat ? '24H' : '12H';
-    localStorage.setItem(STORAGE_KEYS.TIME_FORMAT, is24HourFormat ? '24' : '12');
-    tickClock();
-  }
-
-  function copyTimestamp() {
-    const now = new Date();
-    const isoString = now.toISOString();
-    const localString = now.toLocaleString();
-    const textToCopy = `Timestamp: ${isoString} (${localString})`;
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        showToast('ISO Timestamp copied to clipboard!');
-      }).catch(() => {
-        fallbackCopyText(textToCopy);
-      });
-    } else {
-      fallbackCopyText(textToCopy);
-    }
-  }
-
-  function fallbackCopyText(text) {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-9999px';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-      document.execCommand('copy');
-      showToast('Timestamp copied to clipboard!');
-    } catch (err) {
-      showToast('Copy failed.');
-    }
-    document.body.removeChild(textArea);
-  }
-
-  /* ==========================================================================
-     Simulated Live Diagnostics Jitter
-     ========================================================================== */
-
-  function simulateTelemetryJitter() {
-    setInterval(() => {
-      if (telemetryLatency) {
-        const jitter = Math.floor(12 + Math.random() * 6); // 12-17ms
-        telemetryLatency.textContent = `${jitter} ms`;
-      }
-    }, 3500);
-  }
-
-  /* ==========================================================================
-     Profile Modal Handlers
+     Profile Settings Modal
      ========================================================================== */
 
   function openModal() {
-    inputName.value = userProfile.name;
-    inputRole.value = userProfile.role;
-    modalOverlay.classList.add('open');
-    modalOverlay.setAttribute('aria-hidden', 'false');
-    inputName.focus();
+    el.formName.value = profile.name;
+    el.formBio.value = profile.bio;
+    el.profileModal.classList.add('open');
+    el.profileModal.setAttribute('aria-hidden', 'false');
+    el.formName.focus();
   }
 
   function closeModal() {
-    modalOverlay.classList.remove('open');
-    modalOverlay.setAttribute('aria-hidden', 'true');
+    el.profileModal.classList.remove('open');
+    el.profileModal.setAttribute('aria-hidden', 'true');
   }
 
   /* ==========================================================================
-     Interactive HTML5 Canvas Particle Physics Network
+     Dynamic Cosmic Starfield Physics Simulation
      ========================================================================== */
 
-  function initParticleCanvas() {
-    const canvas = document.getElementById('bg-canvas');
+  function initStarfield() {
+    const canvas = document.getElementById('starfield-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let width = (canvas.width = window.innerWidth);
@@ -318,10 +280,10 @@
       height = canvas.height = window.innerHeight;
     });
 
-    const particles = [];
-    const count = Math.min(Math.floor((width * height) / 18000), 75);
+    const stars = [];
+    const count = Math.min(Math.floor((width * height) / 12000), 80);
 
-    const mouse = { x: null, y: null, maxDist: 150 };
+    const mouse = { x: null, y: null, radius: 160 };
 
     window.addEventListener('mousemove', (e) => {
       mouse.x = e.clientX;
@@ -334,118 +296,103 @@
     });
 
     for (let i = 0; i < count; i++) {
-      particles.push({
+      stars.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.7,
-        vy: (Math.random() - 0.5) * 0.7,
-        radius: Math.random() * 1.8 + 1,
-        baseAlpha: Math.random() * 0.4 + 0.2
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        size: Math.random() * 2 + 0.8,
+        alpha: Math.random() * 0.6 + 0.2,
+        color: Math.random() > 0.4 ? 'rgba(255, 165, 2,' : 'rgba(255, 107, 107,'
       });
     }
 
-    function renderParticles() {
+    function animate() {
       ctx.clearRect(0, 0, width, height);
 
-      // Draw and connect particles
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
+      for (let i = 0; i < stars.length; i++) {
+        const s = stars[i];
 
-        // Move
-        p.x += p.vx;
-        p.y += p.vy;
+        s.x += s.vx;
+        s.y += s.vy;
 
-        // Bounce off edges
-        if (p.x < 0 || p.x > width) p.vx *= -1;
-        if (p.y < 0 || p.y > height) p.vy *= -1;
+        if (s.x < 0) s.x = width;
+        if (s.x > width) s.x = 0;
+        if (s.y < 0) s.y = height;
+        if (s.y > height) s.y = 0;
 
-        // Draw node
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 240, 255, ${p.baseAlpha})`;
-        ctx.fill();
-
-        // Connect with nearby particles
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
+        // Gravitational mouse attraction
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = mouse.x - s.x;
+          const dy = mouse.y - s.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-
-          if (dist < 130) {
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = `rgba(0, 240, 255, ${0.15 * (1 - dist / 130)})`;
-            ctx.lineWidth = 0.8;
-            ctx.stroke();
+          if (dist < mouse.radius) {
+            const force = (1 - dist / mouse.radius) * 0.5;
+            s.x += (dx / dist) * force;
+            s.y += (dy / dist) * force;
           }
         }
 
-        // Connect with mouse cursor
-        if (mouse.x !== null && mouse.y !== null) {
-          const mdx = p.x - mouse.x;
-          const mdy = p.y - mouse.y;
-          const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+        ctx.fillStyle = `${s.color}${s.alpha})`;
+        ctx.fill();
 
-          if (mdist < mouse.maxDist) {
+        // Connect nearby cosmic dust
+        for (let j = i + 1; j < stars.length; j++) {
+          const s2 = stars[j];
+          const dist = Math.hypot(s.x - s2.x, s.y - s2.y);
+          if (dist < 100) {
             ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(mouse.x, mouse.y);
-            ctx.strokeStyle = `rgba(168, 85, 247, ${0.35 * (1 - mdist / mouse.maxDist)})`;
-            ctx.lineWidth = 1;
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(s2.x, s2.y);
+            ctx.strokeStyle = `rgba(255, 165, 2, ${0.12 * (1 - dist / 100)})`;
+            ctx.lineWidth = 0.6;
             ctx.stroke();
           }
         }
       }
 
-      requestAnimationFrame(renderParticles);
+      requestAnimationFrame(animate);
     }
 
-    requestAnimationFrame(renderParticles);
+    requestAnimationFrame(animate);
   }
 
   /* ==========================================================================
-     Event Bindings & Initialization
+     Events & Bootstrap
      ========================================================================== */
 
   function bindEvents() {
-    btnFormatToggle.addEventListener('click', toggleTimeFormat);
-    btnCopyTime.addEventListener('click', copyTimestamp);
-    btnQuickEdit.addEventListener('click', openModal);
-    btnInlineRename.addEventListener('click', openModal);
-    btnResetProfile.addEventListener('click', resetProfile);
-
-    modalCloseBtn.addEventListener('click', closeModal);
-    modalCancelBtn.addEventListener('click', closeModal);
-    modalOverlay.addEventListener('click', (e) => {
-      if (e.target === modalOverlay) closeModal();
+    el.timeFormatBtn.addEventListener('click', toggleFormat);
+    el.copyStampBtn.addEventListener('click', copyTimestamp);
+    el.customizeTriggerBtn.addEventListener('click', openModal);
+    el.modalClose.addEventListener('click', closeModal);
+    el.modalCancel.addEventListener('click', closeModal);
+    el.profileModal.addEventListener('click', (e) => {
+      if (e.target === el.profileModal) closeModal();
     });
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && modalOverlay.classList.contains('open')) {
-        closeModal();
-      }
-    });
-
-    editForm.addEventListener('submit', (e) => {
+    el.profileForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      saveUserProfile(inputName.value, inputRole.value);
+      saveProfile(el.formName.value, el.formBio.value);
       closeModal();
+    });
+
+    el.backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   }
 
   function init() {
-    lblFormat.textContent = is24HourFormat ? '24H' : '12H';
-    applyProfile();
-    initTimezone();
-    tickClock();
-    setInterval(tickClock, 1000);
-    setInterval(() => updateGreeting(new Date()), 60000);
+    renderProfile();
+    el.formatText.textContent = is24Hour ? '24H 模式' : '12H 模式';
+    tick();
+    setInterval(tick, 1000);
 
     bindEvents();
-    simulateTelemetryJitter();
-    initParticleCanvas();
+    initMemo();
+    initStarfield();
   }
 
   if (document.readyState === 'loading') {
