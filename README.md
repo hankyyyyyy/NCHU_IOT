@@ -1,125 +1,133 @@
-# Hank Chang | Personal Horizon & IoT Space
+# Hank Chang | IoT Systems & Telemetry Console
 > **Assignment**: DIC 1 (Do In Class 1) — Personal Page & Live Time System  
 > **Author**: Hank Chang  
-> **Course**: 國立中興大學 物聯網實務 (NCHU IoT 2026)  
+> **Institution**: National Chung Hsing University (NCHU IoT 2026)  
 > **Repository**: [https://github.com/hankyyyyyy/NCHU_IOT](https://github.com/hankyyyyyy/NCHU_IOT)
 
 ---
 
 ## 🔗 Live Demonstration
 
-👉 **線上即時展示 (Live Demo)**: [https://hankyyyyyy.github.io/NCHU_IOT/](https://hankyyyyyy.github.io/NCHU_IOT/)
+👉 **Live Site**: [https://hankyyyyyy.github.io/NCHU_IOT/](https://hankyyyyyy.github.io/NCHU_IOT/)
 
-![Live Demo Preview](demo_preview.png)
-
----
-
-## 🎨 原創個人化設計理念 (Personal Design Philosophy)
-
-本專案完全遵循作業規範 **「不直接複製老師範本，打造專屬個人風格」**，從零重新架構色彩學、排版版型、動態物理與互動元件：
-
-1. **原創色盤（Sunset Horizon Palette）**：
-   - 拋棄公版的藍紫霓虹，改採**深黑藍夜幕（`#070a14`）**、**暮色珊瑚橘（`#ff6b6b`）**、**晨曦金橙（`#ffa502`）** 與 **極光碧綠（`#2ed573`）**，營造具備溫度與探索感的高質感風格。
-2. **前衛字型體系（Typography）**：
-   - 標題與巨型時鐘：採用現代幾何張力的 **`Space Grotesk`**。
-   - 內文與資訊：採用高閱讀清晰度的 **`Plus Jakarta Sans`**。
-   - 數值與標籤：採用技術質感等寬字 **`JetBrains Mono`**。
-3. **原創動態背景（Cosmic Nebula Starfield）**：
-   - 自主開發 HTML5 Canvas 星塵物理畫布，星光微微浮動，並具備**滑鼠引力互動效果**（粒子受游標引力吸引並繪製動態微光連線）。
-4. **雙模時間核心站（Dual-Mode Time Station）**：
-   - 巨型時、分、秒卡片式數字展示，支援 12H / 24H 模式切換。
-   - **晝夜晨昏動態感應（Solar Greeting Engine）**：根據訪問當下的真實時間，自動判斷晨曦（🌅）、上午（🌤️）、正午（☀️）、午後（⛅）、黃昏（🌇）、深夜（🌙）並切換個人化問候語。
-   - **當日時光流逝條**：即時計算當日秒數流逝百分比。
-5. **特色原創功能卡片（Custom Interactive Cards）**：
-   - **IoT 專案與感測器領域**：展示 ESP32 傳感遙測、MQTT 資料通道與邊緣 TinyML 部署重點。
-   - **Hank 的今日專注筆記（Interactive Memo Pad）**：可直接在網頁即時輸入筆記，自動持久化儲存於瀏覽器 `localStorage`。
-   - **全球樞紐時區同步**：同步換算東京、倫敦、紐約、舊金山時間。
-   - **快速傳送門**：一鍵前往 GitHub 倉庫、中興大學首頁與常用工具。
-   - **個人資料彈窗自訂**：隨時點擊「個人設定」即時客製姓名與自介。
+![Live Console Preview](demo_preview.png)
 
 ---
 
-## 🛠️ 技術架構 (Technology Stack)
+## 🎨 Original Design Philosophy (DIC 1 Guidelines)
 
-| 層級 | 採用技術 | 說明與用途 |
+This project strictly adheres to the course assignment mandate: **"Do not directly copy the teacher's template; engineer your own distinctive personal style."**
+
+Every visual layer, structural layout, animation, and interaction has been built from scratch to reflect an original **IoT Systems & Telemetry Console**:
+
+### 1. Asymmetric Split-Console Layout
+- Replaces the generic vertical card stack with an asymmetric dual-column console layout:
+  - **Left Identity Column**: Massive modern typography (`HANK CHANG.`), researcher tagline, hardware competency badges, and quick actions.
+  - **Right Telemetry Column**: Radial orbital time station with a sweeping SVG progress dial and multi-hub timezone switcher.
+
+### 2. Radial Orbital SVG Clock Engine
+- An original circular SVG ring dial dynamically calculating the exact second's progress via `stroke-dashoffset` interpolation.
+- **Multi-Hub Timezone Switcher**: Clickable timezone buttons (`Taipei UTC+8`, `Tokyo +9`, `London +1`, `New York -4`, `San Francisco -7`) that immediately convert the main clock display and date to that locale.
+- **Dynamic Daytime Indicator**: Context-aware greetings that adapt to morning, afternoon, evening, and night.
+- Day progress meter tracking percentage of the day completed.
+
+### 3. Interactive CLI Cyber Terminal
+- An in-browser command-line interface with interactive prompt `hank@nchu:~$`.
+- Supports built-in commands (`help`, `about`, `projects`, `time`, `contact`, `clear`) and one-click quick action chips.
+
+### 4. Real-Time Hardware Telemetry Simulation
+- Live telemetry stats monitoring simulated ESP32 gateway ping latency with dynamic jitter, MCU clock frequency, and memory buffer.
+- Keyframe animated continuous signal continuity waveform.
+
+### 5. Dynamic Theme Accent Engine
+- On-the-fly theme switcher allowing visitors to toggle between **Amber Horizon** (`#f59e0b`), **Cyber Emerald** (`#10b981`), and **Electric Cyan** (`#00f2fe`) with persistent state.
+
+### 6. Auto-Saving Research Notes Pad
+- Integrated quick notes memo area that saves input automatically to browser `localStorage` with real-time feedback.
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology | Usage & Implementation |
 | :--- | :--- | :--- |
-| **結構** | HTML5 語意化標籤 | `<header>`, `<main>`, `<section>`, `<article>`, `<canvas>`, `<footer>` 完整語意架構 |
-| **樣式** | 原生 Vanilla CSS3 | 日落星空配色系統、極限毛玻璃（Backdrop Filter Blur）、自適應響應式佈局 |
-| **字型** | Google Fonts | `Space Grotesk` (時鐘/標題), `Plus Jakarta Sans` (內文), `JetBrains Mono` (標籤) |
-| **邏輯** | 原生 Vanilla JavaScript (ES6+) | 星塵物理模擬、秒級時鐘迴圈、晝夜感測、本地 Memo 自動儲存、時區換算 |
-| **部署** | GitHub Pages & Git | 自動化靜態託管與版本控制 |
+| **Structure** | Semantic HTML5 | Clean accessible markup with unique element IDs and responsive containers |
+| **Styling** | Vanilla CSS3 | Custom blueprint grid overlay, CSS custom properties, theme accents, glass panels |
+| **Typography** | Google Fonts | `Space Grotesk` (headings/numbers), `Plus Jakarta Sans` (body), `JetBrains Mono` (telemetry/CLI) |
+| **Logic** | Vanilla JavaScript (ES6+) | SVG radial calculation, timezone conversion, CLI command parser, autosave engine |
+| **Deployment** | GitHub Pages & Git | Static cloud hosting and automated continuous deployment |
 
 ---
 
-## 📊 專案開發流程 (Workflow)
+## 📊 Project Architecture & Workflow
 
 ```mermaid
 flowchart TD
-    subgraph P1["階段 1：個人化風格定義 (Personal Design)"]
-        A["作業要求 (DIC 1)"] --> B["確立原創風格：日落星空 (Sunset Horizon)"]
-        B --> C1["原創色彩：珊瑚橘 / 晨曦金 / 碧綠光"]
-        B --> C2["字型：Space Grotesk + Plus Jakarta Sans"]
-        B --> C3["自研星塵畫布 (非公版粒子)"]
+    subgraph S1["Phase 1: Original Concept Definition"]
+        A["Course Mandate: DIC 1"] --> B["Objective: 100% Original Design"]
+        B --> C1["Layout: Asymmetric Split Console"]
+        B --> C2["Clock: Radial SVG Orbital Dial"]
+        B --> C3["Interactivity: CLI Terminal & Hubs"]
     end
 
-    subgraph P2["階段 2：前端架構工程"]
-        C1 & C2 & C3 --> D["index.html (全新原創版型)"]
-        D --> E["style.css (日落毛玻璃樣式系統)"]
-        D --> F["app.js (時間核心 + 便簽儲存 + 星塵物理)"]
+    subgraph S2["Phase 2: Frontend Engineering"]
+        C1 & C2 & C3 --> D["index.html (Semantic Structure)"]
+        D --> E["style.css (Blueprint Grid & Glassmorphism)"]
+        D --> F["app.js (Radial Math & Timezone Engine)"]
     end
 
-    subgraph P3["階段 3：功能與互動實現"]
-        F --> G1["雙模時鐘迴圈 (1000ms 刷新)"]
-        F --> G2["晝夜晨昏感應器 (動態圖示問候)"]
-        F --> G3["今日專注筆記 (localStorage 自動儲存)"]
-        F --> G4["ISO 時間戳記複製工具"]
+    subgraph S3["Phase 3: Real-Time Telemetry & State"]
+        F --> G1["Circular Seconds SVG Math (1000ms loop)"]
+        F --> G2["Multi-Zone Converter (Intl.DateTimeFormat)"]
+        F --> G3["Interactive Terminal Parser"]
+        F --> G4["Theme Accent Switcher (localStorage)"]
     end
 
-    subgraph P4["階段 4：雲端部署與驗證"]
-        G1 & G2 & G3 & G4 --> H["Git 提交與版本管理"]
-        H --> I["推送至 GitHub (hankyyyyyy/NCHU_IOT)"]
-        I --> J["GitHub Pages 上線運作"]
+    subgraph S4["Phase 4: Cloud Deployment"]
+        G1 & G2 & G3 & G4 --> H["Git Version Control"]
+        H --> I["Push to GitHub (hankyyyyyy/NCHU_IOT)"]
+        I --> J["Live Deployment via GitHub Pages"]
     end
 
-    classDef phase fill:#0c132c,stroke:#ff6b6b,stroke-width:2px,color:#fff;
-    classDef step fill:#141d33,stroke:#ffa502,stroke-width:1.5px,color:#f8fafc;
-    class P1,P2,P3,P4 phase;
+    classDef phase fill:#0d111a,stroke:#f59e0b,stroke-width:2px,color:#fff;
+    classDef step fill:#131722,stroke:#ff5722,stroke-width:1.5px,color:#f8fafc;
+    class S1,S2,S3,S4 phase;
     class A,B,C1,C2,C3,D,E,F,G1,G2,G3,G4,H,I,J step;
 ```
 
 ---
 
-## 📦 如何在本地運行 (Local Run)
+## 📦 How to Run Locally
 
-1. **複製本倉庫**：
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/hankyyyyyy/NCHU_IOT.git
    cd NCHU_IOT
    ```
 
-2. **直接開啟**：
-   - 使用任意瀏覽器雙擊 `index.html` 即可立即執行。
+2. **Open directly**:
+   - Double-click `index.html` in any modern web browser.
 
-3. **或透過 Python 伺服器運行**：
+3. **Or serve via Python**:
    ```bash
    python -m http.server 3000
    ```
-   在瀏覽器開啟 [http://localhost:3000](http://localhost:3000)。
+   Navigate to [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## 📂 專案檔案結構 (Project Structure)
+## 📂 Project Structure
 
 ```
 .
-├── .gitignore          # Git 忽略檔案規則
-├── README.md           # 專案詳細說明文件與設計理念
-├── app.js              # 星塵物理畫布、時鐘核心、便簽存儲與全球時區
-├── demo_preview.png    # 網頁即時展示截圖
-├── index.html          # 原創 HTML5 語意化版面與各功能模組
-└── style.css           # 日落星空配色、毛玻璃質感與自適應樣式
+├── .gitignore          # Git exclusion rules
+├── README.md           # Comprehensive project documentation & architecture
+├── app.js              # Radial SVG dial, timezone switcher, CLI terminal & state
+├── demo_preview.png    # Live preview screenshot
+├── index.html          # Semantic HTML5 asymmetric console structure
+└── style.css           # Blueprint grid, theme accents, and responsive layout
 ```
 
 ---
 
-© 2026 **Hank Chang** • 國立中興大學 NCHU IoT 原創個人專屬設計
+© 2026 **Hank Chang** • National Chung Hsing University (NCHU IoT)
