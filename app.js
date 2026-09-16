@@ -1,421 +1,453 @@
 /**
- * Personal Dashboard & Live Clock Engine
- * Built with Vanilla JavaScript
+ * NCHU AIoT 2026 - Hank Chang Personal Telemetry Dashboard
+ * Interactive Particle Mesh Physics, Precision Clock Engine & Telemetry Simulator
  */
 
 (function () {
   'use strict';
 
-  // State
-  const storedName = localStorage.getItem('personal_name');
-  const initialName = (storedName && storedName !== 'Alex Rivera') ? storedName : 'Hank Chang';
-  if (storedName === 'Alex Rivera') {
-    localStorage.setItem('personal_name', 'Hank Chang');
-  }
-
-  const state = {
-    userName: initialName,
-    is24Hour: localStorage.getItem('time_format_24h') !== 'false',
-    showSeconds: localStorage.getItem('show_seconds') !== 'false',
-    showMilliseconds: false,
-    theme: localStorage.getItem('personal_theme') || 'dark',
-    focusIndex: 0
+  // --- Configuration & Defaults ---
+  const DEFAULT_PROFILE = {
+    name: 'Hank Chang',
+    role: 'NCHU AIoT Engineer & Developer • 物聯網與邊緣智能系統探索'
   };
 
-  const focusStatuses = [
-    { label: 'In The Zone', color: 'var(--accent-emerald)' },
-    { label: 'Deep Work', color: 'var(--accent-indigo)' },
-    { label: 'Taking a Break', color: 'var(--accent-amber)' },
-    { label: 'Brainstorming', color: 'var(--accent-cyan)' }
-  ];
-
-  const focusQuotes = [
-    '"The secret of getting ahead is getting started."',
-    '"Focus on being productive instead of busy."',
-    '"Small disciplines repeated with consistency lead to great achievements."',
-    '"Time is what we want most, but what we use worst."',
-    '"The future depends on what you do today."'
-  ];
-
-  // DOM Elements
-  const el = {
-    // Theme & Formatting
-    html: document.documentElement,
-    themeToggleBtn: document.getElementById('theme-toggle-btn'),
-    formatToggleBtn: document.getElementById('format-toggle-btn'),
-    formatLabel: document.getElementById('format-label'),
-    secToggleBtn: document.getElementById('sec-toggle-btn'),
-    msToggleBtn: document.getElementById('ms-toggle-btn'),
-    
-    // Timezone
-    tzDisplay: document.getElementById('tz-display'),
-    
-    // Greeting & Name
-    greetingPill: document.getElementById('greeting-pill'),
-    greetingIcon: document.getElementById('greeting-icon'),
-    greetingText: document.getElementById('greeting-text'),
-    nameDisplay: document.getElementById('name-display'),
-    nameText: document.getElementById('name-text'),
-    editNameBtn: document.getElementById('edit-name-btn'),
-    nameEditBox: document.getElementById('name-edit-box'),
-    nameInput: document.getElementById('name-input'),
-    saveNameBtn: document.getElementById('save-name-btn'),
-    cancelNameBtn: document.getElementById('cancel-name-btn'),
-    footerUserName: document.getElementById('footer-user-name'),
-
-    // Clock
-    hours: document.getElementById('hours'),
-    minutes: document.getElementById('minutes'),
-    seconds: document.getElementById('seconds'),
-    milliseconds: document.getElementById('milliseconds'),
-    secElements: document.querySelectorAll('.sec-elem'),
-    ampm: document.getElementById('ampm'),
-    
-    // Progress & Date
-    dayProgressFill: document.getElementById('day-progress-fill'),
-    dayProgressText: document.getElementById('day-progress-text'),
-    fullDay: document.getElementById('full-day'),
-    fullDate: document.getElementById('full-date'),
-    dayOfYearPill: document.getElementById('day-of-year-pill'),
-    weekNumberPill: document.getElementById('week-number-pill'),
-
-    // World Clocks
-    worldTokyo: document.getElementById('world-time-tokyo'),
-    worldLondon: document.getElementById('world-time-london'),
-    worldNy: document.getElementById('world-time-ny'),
-    worldSf: document.getElementById('world-time-sf'),
-
-    // Focus Widget
-    focusStatusToggle: document.getElementById('focus-status-toggle'),
-    focusStatusLabel: document.getElementById('focus-status-label'),
-    focusQuote: document.getElementById('focus-quote'),
-    focusPill: document.getElementById('focus-pill')
+  const STORAGE_KEYS = {
+    PROFILE: 'aiot_hank_profile',
+    TIME_FORMAT: 'aiot_hank_time_format' // '12' or '24'
   };
 
+  // --- State ---
+  let is24HourFormat = localStorage.getItem(STORAGE_KEYS.TIME_FORMAT) !== '12';
+  let userProfile = loadUserProfile();
+
+  // --- DOM Elements ---
+  const elHours = document.getElementById('clock-hours');
+  const elMinutes = document.getElementById('clock-minutes');
+  const elSeconds = document.getElementById('clock-seconds');
+  const elPeriod = document.getElementById('clock-period');
+  const elPeriodContainer = document.getElementById('period-container');
+  const elDate = document.getElementById('clock-date');
+  const elTimezone = document.getElementById('clock-timezone');
+  const elDayProgressVal = document.getElementById('day-progress-val');
+  const elDayProgressFill = document.getElementById('day-progress-fill');
+
+  const elGreetingText = document.getElementById('greeting-text');
+  const elGreetingIcon = document.getElementById('greeting-icon');
+
+  const elUserName = document.getElementById('user-name');
+  const elUserRole = document.getElementById('user-role');
+  const elAvatarInitials = document.getElementById('avatar-initials');
+
+  const btnFormatToggle = document.getElementById('format-toggle-btn');
+  const lblFormat = document.getElementById('format-label');
+  const btnCopyTime = document.getElementById('copy-time-btn');
+  const btnQuickEdit = document.getElementById('quick-edit-btn');
+  const btnInlineRename = document.getElementById('inline-rename-btn');
+  const btnResetProfile = document.getElementById('reset-profile-btn');
+
+  const modalOverlay = document.getElementById('edit-modal');
+  const modalCloseBtn = document.getElementById('modal-close-btn');
+  const modalCancelBtn = document.getElementById('modal-cancel-btn');
+  const editForm = document.getElementById('edit-profile-form');
+  const inputName = document.getElementById('input-name');
+  const inputRole = document.getElementById('input-role');
+
+  const toast = document.getElementById('toast');
+  const toastMessage = document.getElementById('toast-message');
+  let toastTimer = null;
+
+  const telemetryLatency = document.getElementById('telemetry-latency');
+
+  // World Clocks
+  const worldTokyo = document.getElementById('world-tokyo');
+  const worldLondon = document.getElementById('world-london');
+  const worldNy = document.getElementById('world-ny');
+  const worldSf = document.getElementById('world-sf');
+
   /* ==========================================================================
-     Theme Management
+     Profile State & Initialization
      ========================================================================== */
 
-  function applyTheme(theme) {
-    state.theme = theme;
-    el.html.setAttribute('data-theme', theme);
-    localStorage.setItem('personal_theme', theme);
-  }
-
-  function toggleTheme() {
-    const nextTheme = state.theme === 'dark' ? 'light' : 'dark';
-    applyTheme(nextTheme);
-  }
-
-  /* ==========================================================================
-     User Name Management
-     ========================================================================== */
-
-  function renderName() {
-    el.nameText.textContent = state.userName;
-    if (el.footerUserName) {
-      el.footerUserName.textContent = state.userName;
+  function loadUserProfile() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.PROFILE);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.name && parsed.name !== 'Alex Rivera') return parsed;
+      }
+    } catch (e) {
+      console.warn('Failed reading profile from storage:', e);
     }
+    return { ...DEFAULT_PROFILE };
   }
 
-  function startEditName() {
-    el.nameDisplay.classList.add('hidden');
-    el.nameEditBox.classList.remove('hidden');
-    el.nameInput.value = state.userName;
-    el.nameInput.focus();
-    el.nameInput.select();
-  }
-
-  function saveName() {
-    const val = el.nameInput.value.trim();
-    if (val.length > 0) {
-      state.userName = val;
-      localStorage.setItem('personal_name', val);
-      renderName();
-      updateGreeting();
+  function getInitials(name) {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
-    cancelEditName();
+    return name.slice(0, 2).toUpperCase();
   }
 
-  function cancelEditName() {
-    el.nameEditBox.classList.add('hidden');
-    el.nameDisplay.classList.remove('hidden');
+  function applyProfile() {
+    elUserName.textContent = userProfile.name;
+    elUserRole.textContent = userProfile.role;
+    if (elAvatarInitials) {
+      elAvatarInitials.textContent = getInitials(userProfile.name);
+    }
+    updateGreeting(new Date());
+  }
+
+  function saveUserProfile(name, role) {
+    userProfile = {
+      name: name.trim() || DEFAULT_PROFILE.name,
+      role: role.trim() || DEFAULT_PROFILE.role
+    };
+    try {
+      localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(userProfile));
+    } catch (e) {
+      console.warn('Failed saving profile:', e);
+    }
+    applyProfile();
+    showToast('Profile updated successfully!');
+  }
+
+  function resetProfile() {
+    userProfile = { ...DEFAULT_PROFILE };
+    try {
+      localStorage.removeItem(STORAGE_KEYS.PROFILE);
+    } catch (e) {}
+    applyProfile();
+    showToast('Profile reset to default.');
   }
 
   /* ==========================================================================
-     Time & Clock Logic
+     Toast Notifications
      ========================================================================== */
 
-  function pad(num, size = 2) {
+  function showToast(message) {
+    if (toastTimer) clearTimeout(toastTimer);
+    toastMessage.textContent = message;
+    toast.classList.add('show');
+    toastTimer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2800);
+  }
+
+  /* ==========================================================================
+     Time & Clock Telemetry Loop
+     ========================================================================== */
+
+  function padZero(num, size = 2) {
     let s = num.toString();
     while (s.length < size) s = '0' + s;
     return s;
   }
 
-  function getDayOfYear(date) {
-    const start = new Date(date.getFullYear(), 0, 0);
-    const diff = date - start;
-    const oneDay = 1000 * 60 * 60 * 24;
-    return Math.floor(diff / oneDay);
-  }
-
-  function isLeapYear(year) {
-    return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-  }
-
-  function getWeekNumber(date) {
-    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-    const dayNum = d.getUTCDay() || 7;
-    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-  }
-
-  function updateGreeting(now = new Date()) {
+  function updateGreeting(now) {
     const hour = now.getHours();
-    let greeting = 'Welcome';
+    let text = 'GOOD DAY';
     let icon = '✨';
 
     if (hour >= 5 && hour < 12) {
-      greeting = 'Good Morning';
+      text = 'GOOD MORNING';
       icon = '🌅';
     } else if (hour >= 12 && hour < 17) {
-      greeting = 'Good Afternoon';
+      text = 'GOOD AFTERNOON';
       icon = '☀️';
     } else if (hour >= 17 && hour < 22) {
-      greeting = 'Good Evening';
+      text = 'GOOD EVENING';
       icon = '🌇';
     } else {
-      greeting = 'Good Night';
+      text = 'NIGHT MODE ACTIVE';
       icon = '🌙';
     }
 
-    el.greetingText.textContent = `${greeting}, ${state.userName}`;
-    el.greetingIcon.textContent = icon;
+    elGreetingText.textContent = `${text}, ${userProfile.name.toUpperCase()}`;
+    elGreetingIcon.textContent = icon;
   }
 
   function updateWorldClocks(now) {
-    const options = {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: !state.is24Hour
-    };
-
+    const opts = { hour: '2-digit', minute: '2-digit', hour12: !is24HourFormat };
     try {
-      if (el.worldTokyo) {
-        el.worldTokyo.textContent = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'Asia/Tokyo' }).format(now);
-      }
-      if (el.worldLondon) {
-        el.worldLondon.textContent = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'Europe/London' }).format(now);
-      }
-      if (el.worldNy) {
-        el.worldNy.textContent = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'America/New_York' }).format(now);
-      }
-      if (el.worldSf) {
-        el.worldSf.textContent = new Intl.DateTimeFormat('en-US', { ...options, timeZone: 'America/Los_Angeles' }).format(now);
-      }
+      if (worldTokyo) worldTokyo.textContent = new Intl.DateTimeFormat('en-US', { ...opts, timeZone: 'Asia/Tokyo' }).format(now);
+      if (worldLondon) worldLondon.textContent = new Intl.DateTimeFormat('en-US', { ...opts, timeZone: 'Europe/London' }).format(now);
+      if (worldNy) worldNy.textContent = new Intl.DateTimeFormat('en-US', { ...opts, timeZone: 'America/New_York' }).format(now);
+      if (worldSf) worldSf.textContent = new Intl.DateTimeFormat('en-US', { ...opts, timeZone: 'America/Los_Angeles' }).format(now);
     } catch (e) {
-      console.warn('World clock timezone formatting error:', e);
+      console.warn('World clock format error:', e);
     }
   }
 
-  function updateClock() {
+  function tickClock() {
     const now = new Date();
     let hours = now.getHours();
     const minutes = now.getMinutes();
     const seconds = now.getSeconds();
-    const milliseconds = now.getMilliseconds();
 
-    // 12/24 Hour format
-    if (!state.is24Hour) {
-      el.ampm.classList.remove('hidden');
-      const isPm = hours >= 12;
-      el.ampm.textContent = isPm ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12; // hour 0 should be 12
+    // 12H vs 24H formatting
+    if (is24HourFormat) {
+      elPeriodContainer.style.display = 'none';
     } else {
-      el.ampm.classList.add('hidden');
+      elPeriodContainer.style.display = 'flex';
+      const isPm = hours >= 12;
+      elPeriod.textContent = isPm ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // 0 should be 12
     }
 
-    el.hours.textContent = pad(hours);
-    el.minutes.textContent = pad(minutes);
-    el.seconds.textContent = pad(seconds);
+    elHours.textContent = padZero(hours);
+    elMinutes.textContent = padZero(minutes);
+    elSeconds.textContent = padZero(seconds);
 
-    if (state.showMilliseconds) {
-      el.milliseconds.textContent = '.' + pad(milliseconds, 3);
-    }
+    // Day Progress
+    const totalSecondsToday = now.getHours() * 3600 + minutes * 60 + seconds;
+    const dayProgress = ((totalSecondsToday / 86400) * 100).toFixed(1);
+    elDayProgressVal.textContent = `${dayProgress}%`;
+    elDayProgressFill.style.width = `${dayProgress}%`;
 
-    // Day Progress calculation
-    const rawHours = now.getHours();
-    const secondsInDay = rawHours * 3600 + minutes * 60 + seconds;
-    const progressPercent = ((secondsInDay / 86400) * 100).toFixed(1);
-    el.dayProgressFill.style.width = `${progressPercent}%`;
-    el.dayProgressText.textContent = `${progressPercent}%`;
-
-    // Calendar & Date details
+    // Calendar Date
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const months = [
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
+    elDate.textContent = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
 
-    el.fullDay.textContent = days[now.getDay()];
-    el.fullDate.textContent = `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
-
-    // Day of year and Week number
-    const totalDays = isLeapYear(now.getFullYear()) ? 366 : 365;
-    const dayOfYear = getDayOfYear(now);
-    el.dayOfYearPill.textContent = `Day ${dayOfYear} of ${totalDays}`;
-    el.weekNumberPill.textContent = `Week ${getWeekNumber(now)}`;
-
-    // Update greeting
-    updateGreeting(now);
-
-    // Update World Clocks
+    // World clocks
     updateWorldClocks(now);
   }
 
-  /* ==========================================================================
-     Timezone & Formatting Controls
-     ========================================================================== */
-
   function initTimezone() {
     try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local';
-      const offsetMinutes = -new Date().getTimezoneOffset();
-      const offsetHours = offsetMinutes / 60;
-      const sign = offsetHours >= 0 ? '+' : '';
-      el.tzDisplay.textContent = `${tz} (UTC${sign}${offsetHours})`;
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Taipei';
+      const offsetMin = -new Date().getTimezoneOffset();
+      const offsetHrs = offsetMin / 60;
+      const sign = offsetHrs >= 0 ? '+' : '';
+      elTimezone.textContent = `${tz} (UTC${sign}${offsetHrs})`;
     } catch (e) {
-      el.tzDisplay.textContent = 'Local Time';
+      elTimezone.textContent = 'Asia/Taipei (UTC+8)';
     }
   }
 
-  function setFormat(is24) {
-    state.is24Hour = is24;
-    localStorage.setItem('time_format_24h', is24);
-    el.formatLabel.textContent = is24 ? '24H' : '12H';
-    updateClock();
+  function toggleTimeFormat() {
+    is24HourFormat = !is24HourFormat;
+    lblFormat.textContent = is24HourFormat ? '24H' : '12H';
+    localStorage.setItem(STORAGE_KEYS.TIME_FORMAT, is24HourFormat ? '24' : '12');
+    tickClock();
   }
 
-  function toggleFormat() {
-    setFormat(!state.is24Hour);
-  }
+  function copyTimestamp() {
+    const now = new Date();
+    const isoString = now.toISOString();
+    const localString = now.toLocaleString();
+    const textToCopy = `Timestamp: ${isoString} (${localString})`;
 
-  function toggleSeconds() {
-    state.showSeconds = !state.showSeconds;
-    localStorage.setItem('show_seconds', state.showSeconds);
-    el.secToggleBtn.classList.toggle('active', state.showSeconds);
-    el.secToggleBtn.textContent = `Sec: ${state.showSeconds ? 'ON' : 'OFF'}`;
-
-    el.secElements.forEach(item => {
-      if (state.showSeconds) {
-        item.classList.remove('hidden');
-      } else {
-        item.classList.add('hidden');
-      }
-    });
-  }
-
-  function toggleMilliseconds() {
-    state.showMilliseconds = !state.showMilliseconds;
-    el.msToggleBtn.classList.toggle('active', state.showMilliseconds);
-    el.msToggleBtn.textContent = `ms: ${state.showMilliseconds ? 'ON' : 'OFF'}`;
-
-    if (state.showMilliseconds) {
-      el.milliseconds.classList.remove('hidden');
-      startHighFrequencyTicker();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        showToast('ISO Timestamp copied to clipboard!');
+      }).catch(() => {
+        fallbackCopyText(textToCopy);
+      });
     } else {
-      el.milliseconds.classList.add('hidden');
-      startNormalTicker();
+      fallbackCopyText(textToCopy);
     }
   }
 
-  let clockTimer = null;
-
-  function startNormalTicker() {
-    if (clockTimer) clearInterval(clockTimer);
-    updateClock();
-    clockTimer = setInterval(updateClock, 1000);
-  }
-
-  function startHighFrequencyTicker() {
-    if (clockTimer) clearInterval(clockTimer);
-    updateClock();
-    clockTimer = setInterval(updateClock, 40); // 25 fps updates for milliseconds
+  function fallbackCopyText(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-9999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+      showToast('Timestamp copied to clipboard!');
+    } catch (err) {
+      showToast('Copy failed.');
+    }
+    document.body.removeChild(textArea);
   }
 
   /* ==========================================================================
-     Widget Handlers
+     Simulated Live Diagnostics Jitter
      ========================================================================== */
 
-  function cycleFocusStatus() {
-    state.focusIndex = (state.focusIndex + 1) % focusStatuses.length;
-    const current = focusStatuses[state.focusIndex];
-    el.focusStatusLabel.textContent = current.label;
-    
-    // Cycle quote
-    const nextQuote = focusQuotes[Math.floor(Math.random() * focusQuotes.length)];
-    el.focusQuote.textContent = nextQuote;
+  function simulateTelemetryJitter() {
+    setInterval(() => {
+      if (telemetryLatency) {
+        const jitter = Math.floor(12 + Math.random() * 6); // 12-17ms
+        telemetryLatency.textContent = `${jitter} ms`;
+      }
+    }, 3500);
   }
 
   /* ==========================================================================
-     Event Listeners
+     Profile Modal Handlers
+     ========================================================================== */
+
+  function openModal() {
+    inputName.value = userProfile.name;
+    inputRole.value = userProfile.role;
+    modalOverlay.classList.add('open');
+    modalOverlay.setAttribute('aria-hidden', 'false');
+    inputName.focus();
+  }
+
+  function closeModal() {
+    modalOverlay.classList.remove('open');
+    modalOverlay.setAttribute('aria-hidden', 'true');
+  }
+
+  /* ==========================================================================
+     Interactive HTML5 Canvas Particle Physics Network
+     ========================================================================== */
+
+  function initParticleCanvas() {
+    const canvas = document.getElementById('bg-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    const particles = [];
+    const count = Math.min(Math.floor((width * height) / 18000), 75);
+
+    const mouse = { x: null, y: null, maxDist: 150 };
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+    });
+
+    window.addEventListener('mouseleave', () => {
+      mouse.x = null;
+      mouse.y = null;
+    });
+
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.7,
+        vy: (Math.random() - 0.5) * 0.7,
+        radius: Math.random() * 1.8 + 1,
+        baseAlpha: Math.random() * 0.4 + 0.2
+      });
+    }
+
+    function renderParticles() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw and connect particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        // Move
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Bounce off edges
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        // Draw node
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 240, 255, ${p.baseAlpha})`;
+        ctx.fill();
+
+        // Connect with nearby particles
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < 130) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = `rgba(0, 240, 255, ${0.15 * (1 - dist / 130)})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+
+        // Connect with mouse cursor
+        if (mouse.x !== null && mouse.y !== null) {
+          const mdx = p.x - mouse.x;
+          const mdy = p.y - mouse.y;
+          const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+
+          if (mdist < mouse.maxDist) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(mouse.x, mouse.y);
+            ctx.strokeStyle = `rgba(168, 85, 247, ${0.35 * (1 - mdist / mouse.maxDist)})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(renderParticles);
+    }
+
+    requestAnimationFrame(renderParticles);
+  }
+
+  /* ==========================================================================
+     Event Bindings & Initialization
      ========================================================================== */
 
   function bindEvents() {
-    // Theme
-    el.themeToggleBtn.addEventListener('click', toggleTheme);
+    btnFormatToggle.addEventListener('click', toggleTimeFormat);
+    btnCopyTime.addEventListener('click', copyTimestamp);
+    btnQuickEdit.addEventListener('click', openModal);
+    btnInlineRename.addEventListener('click', openModal);
+    btnResetProfile.addEventListener('click', resetProfile);
 
-    // Format
-    el.formatToggleBtn.addEventListener('click', toggleFormat);
-    el.secToggleBtn.addEventListener('click', toggleSeconds);
-    el.msToggleBtn.addEventListener('click', toggleMilliseconds);
-
-    // Name Editing
-    el.nameDisplay.addEventListener('click', startEditName);
-    el.editNameBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      startEditName();
+    modalCloseBtn.addEventListener('click', closeModal);
+    modalCancelBtn.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) closeModal();
     });
-    el.saveNameBtn.addEventListener('click', saveName);
-    el.cancelNameBtn.addEventListener('click', cancelEditName);
 
-    el.nameInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        saveName();
-      } else if (e.key === 'Escape') {
-        cancelEditName();
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalOverlay.classList.contains('open')) {
+        closeModal();
       }
     });
 
-    // Focus Widget
-    if (el.focusStatusToggle) {
-      el.focusStatusToggle.addEventListener('click', cycleFocusStatus);
-    }
+    editForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      saveUserProfile(inputName.value, inputRole.value);
+      closeModal();
+    });
   }
-
-  /* ==========================================================================
-     Initialization
-     ========================================================================== */
 
   function init() {
-    applyTheme(state.theme);
-    renderName();
+    lblFormat.textContent = is24HourFormat ? '24H' : '12H';
+    applyProfile();
     initTimezone();
-    setFormat(state.is24Hour);
-    
-    if (!state.showSeconds) {
-      el.secToggleBtn.classList.remove('active');
-      el.secToggleBtn.textContent = 'Sec: OFF';
-      el.secElements.forEach(item => item.classList.add('hidden'));
-    }
+    tickClock();
+    setInterval(tickClock, 1000);
+    setInterval(() => updateGreeting(new Date()), 60000);
 
     bindEvents();
-    startNormalTicker();
+    simulateTelemetryJitter();
+    initParticleCanvas();
   }
 
-  // Run on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {

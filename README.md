@@ -30,15 +30,19 @@ This project is a modern, high-performance personal dashboard created for **DIC 
 
 ## 🚀 Core Features
 
-- ⏱️ **Real-Time Hero Clock**: Updates hours, minutes, and seconds continuously with smooth transitions.
-- 🔄 **12H / 24H & Precision Controls**: Instant toggle between 12-hour AM/PM and 24-hour format, with optional seconds and millisecond precision ticker.
-- 🌅 **Dynamic Greeting Engine**: Contextual greetings that adjust to the time of day with personal greeting tag.
+- ⏱️ **Real-Time Telemetry Hero Clock**: High-precision clock updating hours, minutes, and seconds continuously with smooth digital boxes.
+- 🌌 **Interactive HTML5 Canvas Particle Network**: Dynamic particle mesh reacting to cursor proximity with connecting node physics.
+- 👤 **Identity Profile Card**: Author avatar with **HC** initials, active status badge, and AIoT specialization tags.
+- 📋 **Copy Timestamp Tool**: One-click export of ISO 8601 and local timestamps to clipboard with animated floating toast notification.
+- 🔄 **12H / 24H Format Switcher**: Instant toggle between 12-hour AM/PM and 24-hour format, remembered in `localStorage`.
+- 🌅 **Dynamic Greeting Engine**: Context-aware greetings that adapt to the hour of day (`Good morning`, `Good afternoon`, `Good evening`, `Night mode active`).
 - 📈 **Day Progress Bar**: Visual progress indicator tracking the exact percentage of the current day completed.
+- 🧠 **AIoT 2026 Research Pillars**: Dedicated focus cards for Embedded Edge ML (TinyML), Sensor Networks, and Intelligent Automation.
+- 🛠️ **Technical Arsenal Tags**: Interactive skill badges for C/C++, Python, ESP32, FreeRTOS, TinyML, MQTT, Linux, and Computer Vision.
+- 📡 **Live Node Diagnostics Simulator**: Simulated gateway latency (14ms live fluctuating), CPU clock (240MHz), memory buffer, and animated sparkline wave.
 - 🌐 **Global Hubs Synchronization**: World clocks displaying synchronized real-time hours across Tokyo, London, New York, and San Francisco.
-- ⚡ **Daily Focus & Productivity**: Interactive focus state switcher (`In The Zone`, `Deep Work`, `Taking a Break`, `Brainstorming`) with motivational quotes.
-- 🚀 **Quick Launch Shortcuts**: Fast access to GitHub repository (`NCHU_IOT`), search tools, and developer platforms.
-- 🎨 **Adaptive Dark / Light Themes**: Sleek dark and light glassmorphism with ambient aurora background animations.
-- ✏️ **Inline Profile Renaming**: Click-to-edit display name with automatic `localStorage` persistence.
+- 🚀 **Quick Launch Shortcuts**: Fast direct links to GitHub repository (`NCHU_IOT`), profile, and developer portals.
+- ✏️ **Profile Customizer Modal**: In-browser modal to customize display name and role with persistent state.
 
 ---
 
