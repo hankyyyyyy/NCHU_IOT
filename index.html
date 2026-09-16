@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hank Chang - Personal Dashboard & Live Clock</title>
+  <meta name="description" content="A sleek, modern personal homepage featuring live real-time clock, personalized greetings, and interactive dashboard widgets.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient Aurora Background -->
+  <div class="ambient-glow">
+    <div class="orb orb-1" id="orb-1"></div>
+    <div class="orb orb-2" id="orb-2"></div>
+    <div class="orb orb-3" id="orb-3"></div>
+  </div>
+
+  <div class="app-layout">
+    <!-- Top Bar -->
+    <header class="top-nav" id="top-nav">
+      <div class="nav-brand">
+        <span class="brand-dot"></span>
+        <span class="brand-text">Personal Space</span>
+      </div>
+      
+      <div class="nav-controls">
+        <a href="https://github.com/hankyyyyyy/NCHU_IOT" target="_blank" rel="noopener" class="badge repo-badge" id="repo-badge" title="NCHU_IOT GitHub Repository">
+          <svg class="icon" viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+          </svg>
+          <span>NCHU_IOT</span>
+        </a>
+        <div class="badge time-badge" id="timezone-badge" title="Detected Local Timezone">
+          <svg class="icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            <path d="M2 12h20"></path>
+          </svg>
+          <span id="tz-display">UTC</span>
+        </div>
+
+        <button class="btn btn-icon" id="format-toggle-btn" title="Toggle 12h/24h Format">
+          <span id="format-label">24H</span>
+        </button>
+
+        <button class="btn btn-icon" id="theme-toggle-btn" title="Toggle Light/Dark Theme">
+          <svg class="icon theme-icon-dark" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+          <svg class="icon theme-icon-light" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+      
+      <!-- Greeting & Name Hero Section -->
+      <section class="hero-section" id="hero-section">
+        <div class="greeting-pill" id="greeting-pill">
+          <span class="greeting-icon" id="greeting-icon">✨</span>
+          <span class="greeting-text" id="greeting-text">Welcome</span>
+        </div>
+
+        <div class="name-container">
+          <h1 class="personal-name" id="name-display" title="Click to edit your name">
+            <span id="name-text">Hank Chang</span>
+            <button class="edit-btn" id="edit-name-btn" aria-label="Edit name" title="Edit name">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+              </svg>
+            </button>
+          </h1>
+
+          <div class="name-edit-box hidden" id="name-edit-box">
+            <input type="text" id="name-input" class="name-input" maxlength="32" placeholder="Enter your name" autocomplete="off" />
+            <div class="edit-actions">
+              <button class="btn btn-primary btn-sm" id="save-name-btn">Save</button>
+              <button class="btn btn-secondary btn-sm" id="cancel-name-btn">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <p class="subtitle" id="user-status-text">Your personal portal • Powered by real-time precision</p>
+      </section>
+
+      <!-- Digital Clock Master Card -->
+      <section class="clock-card" id="clock-card">
+        <div class="clock-header">
+          <div class="live-indicator">
+            <span class="live-dot"></span>
+            <span>LIVE TIME</span>
+          </div>
+          <div class="clock-toolbar">
+            <button class="btn-chip active" id="sec-toggle-btn" title="Toggle seconds display">Sec: ON</button>
+            <button class="btn-chip" id="ms-toggle-btn" title="Toggle millisecond ticker">ms: OFF</button>
+          </div>
+        </div>
+
+        <!-- Clock Display -->
+        <div class="clock-display" id="clock-display">
+          <div class="time-digits-group">
+            <span class="digit-box" id="hours">00</span>
+            <span class="digit-separator">:</span>
+            <span class="digit-box" id="minutes">00</span>
+            <span class="digit-separator sec-elem">:</span>
+            <span class="digit-box sec-elem" id="seconds">00</span>
+            <span class="digit-box ms-elem hidden" id="milliseconds">.000</span>
+          </div>
+          <span class="ampm-indicator hidden" id="ampm">AM</span>
+        </div>
+
+        <!-- Progress of the Day -->
+        <div class="day-progress-container" title="Day completion progress">
+          <div class="progress-info">
+            <span>Day Progress</span>
+            <span id="day-progress-text">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="day-progress-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Live Calendar & Date -->
+        <div class="date-strip" id="date-strip">
+          <div class="date-item">
+            <svg class="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span class="date-highlight" id="full-day">Wednesday</span>
+            <span class="date-muted" id="full-date">September 16, 2026</span>
+          </div>
+          <div class="date-divider"></div>
+          <div class="date-item">
+            <span class="day-number-pill" id="day-of-year-pill">Day 259 of 365</span>
+            <span class="week-number-pill" id="week-number-pill">Week 38</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Dashboard Widgets Grid -->
+      <section class="widgets-grid" id="widgets-grid">
+        
+        <!-- Focus / Productivity Widget -->
+        <div class="widget-card" id="focus-widget">
+          <div class="widget-header">
+            <div class="widget-title">
+              <span class="widget-icon">⚡</span>
+              <h3>Daily Focus</h3>
+            </div>
+            <button class="widget-action-btn" id="focus-status-toggle">Toggle</button>
+          </div>
+          <div class="widget-body">
+            <p class="focus-quote" id="focus-quote">"The secret of getting ahead is getting started."</p>
+            <div class="focus-status-pill" id="focus-pill">
+              <span class="pulse-dot"></span>
+              <span id="focus-status-label">In The Zone</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- World Clocks Widget -->
+        <div class="widget-card" id="world-clock-widget">
+          <div class="widget-header">
+            <div class="widget-title">
+              <span class="widget-icon">🌐</span>
+              <h3>Global Hubs</h3>
+            </div>
+            <span class="sub-label">Sync</span>
+          </div>
+          <div class="widget-body world-clocks-list">
+            <div class="world-item">
+              <span class="world-city">Tokyo</span>
+              <span class="world-time" id="world-time-tokyo">--:--</span>
+            </div>
+            <div class="world-item">
+              <span class="world-city">London</span>
+              <span class="world-time" id="world-time-london">--:--</span>
+            </div>
+            <div class="world-item">
+              <span class="world-city">New York</span>
+              <span class="world-time" id="world-time-ny">--:--</span>
+            </div>
+            <div class="world-item">
+              <span class="world-city">San Francisco</span>
+              <span class="world-time" id="world-time-sf">--:--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Links / Shortcuts Widget -->
+        <div class="widget-card" id="shortcuts-widget">
+          <div class="widget-header">
+            <div class="widget-title">
+              <span class="widget-icon">🚀</span>
+              <h3>Quick Launch</h3>
+            </div>
+            <span class="sub-label">Tools</span>
+          </div>
+          <div class="widget-body shortcuts-grid">
+            <a href="https://github.com/hankyyyyyy/NCHU_IOT" target="_blank" rel="noopener" class="shortcut-link repo-highlight" title="NCHU_IOT Repository on GitHub">
+              <span class="shortcut-icon">🌐</span>
+              <span>NCHU_IOT</span>
+            </a>
+            <a href="https://google.com" target="_blank" rel="noopener" class="shortcut-link">
+              <span class="shortcut-icon">🔍</span>
+              <span>Search</span>
+            </a>
+            <a href="https://news.ycombinator.com" target="_blank" rel="noopener" class="shortcut-link">
+              <span class="shortcut-icon">📰</span>
+              <span>Hacker News</span>
+            </a>
+            <a href="https://codepen.io" target="_blank" rel="noopener" class="shortcut-link">
+              <span class="shortcut-icon">✨</span>
+              <span>CodePen</span>
+            </a>
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span class="sync-icon">●</span>
+        <span>Local Time Engine • Accurate & Responsive</span>
+      </div>
+      <div class="footer-right">
+        <span>Designed for <a href="https://github.com/hankyyyyyy" target="_blank" rel="noopener" class="footer-link"><strong id="footer-user-name">Hank Chang</strong></a></span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
